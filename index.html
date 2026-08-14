@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question for You</title>
+    <style>
+        :root {
+            --bg-color: #fff0f3;
+            --card-bg: #ffffff;
+            --primary-color: #ff4d6d;
+            --primary-hover: #ff758f;
+            --text-color: #2b2d42;
+            --accent-color: #8338ec;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            /* Fixed: Allows scrolling on smaller phone screens */
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.1);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            transition: all 0.4s ease;
+            position: relative;
+            margin: auto;
+            /* Keeps card centered while scrolling */
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .gif-placeholder {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        .btn-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            height: 60px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-yes {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-no {
+            background-color: #e0e0e0;
+            color: #666;
+            position: absolute;
+            transition: all 0.1s ease-out;
+            z-index: 10;
+        }
+
+        /* Form Controls */
+        .form-group {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffd1dc;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            background: #fff9fa;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+            font-family: inherit;
+        }
+
+        input[type="date"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .compliment-text {
+            font-style: italic;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            20% {
+                transform: scale(1.1);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            80% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div id="screen-question" class="screen active">
+            <div class="gif-placeholder">💝</div>
+            <h1>Hey Beautiful...</h1>
+            <p>Will you do me the absolute honor of going out on a date with me?</p>
+            <div class="btn-container" id="container-1">
+                <button class="btn btn-yes" onclick="handleYesClick()">Yes!</button>
+                <button class="btn btn-no" id="no-button">No</button>
+            </div>
+        </div>
+
+        <div id="screen-details" class="screen">
+            <div class="gif-placeholder">✨</div>
+            <h1>I knew you'd say yes!</h1>
+            <p class="compliment-text">"You are effortlessly stunning, and your smile completely lights up my world. I
+                can't wait to spend this time with you Mimo."</p>
+
+            <form id="date-form" onsubmit="submitDetails(event)">
+                <div class="form-group">
+                    <label for="email-input">Your Email Address:</label>
+                    <input type="email" id="email-input" placeholder="name@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="feelings-input">How do you feel about me? (Or a sweet note):</label>
+                    <textarea id="feelings-input" placeholder="Type your thoughts here..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="date-select">Pick a perfect day:</label>
+                    <input type="date" id="date-select" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="food-select">What are you craving?</label>
+                    <select id="food-select" required>
+                        <option value="" disabled selected>Select what you wanna engulf Connie...</option>
+                        <option value="Italian">Chips kuku</option>
+                        <option value="Sushi">Rice and stew</option>
+                        <option value="Burgers">pilau</option>
+                        <option value="Steakhouse">Ugali and fish</option>
+                        <option value="Dessert">Nyama choma</option>
+                        <option value="Surprise Me">Surprise Me!</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submit-btn" class="btn btn-yes" style="width: 100%;">Lock it in! 🗓️</button>
+            </form>
+        </div>
+
+        <div id="screen-final" class="screen">
+            <div class="gif-placeholder">🎉</div>
+            <h1>It's an official date!</h1>
+            <p>Your choices have been locked in perfectly. I'll make sure everything is absolutely flawless for us.</p>
+            <div id="summary-details" style="font-weight: 600; margin-top: 10px; color: var(--primary-color);"></div>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('no-button');
+        const container = document.getElementById('container-1');
+
+        function resetNoButton() {
+            noBtn.style.left = '60%';
+            noBtn.style.top = '10px';
+        }
+        resetNoButton();
+
+        function moveNoButton() {
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            const btnWidth = noBtn.clientWidth;
+            const btnHeight = noBtn.clientHeight;
+
+            const maxLeft = containerWidth - btnWidth;
+            const maxTop = containerHeight - btnHeight;
+
+            const randomLeft = Math.floor(Math.random() * maxLeft);
+            const randomTop = Math.floor(Math.random() * maxTop);
+
+            noBtn.style.left = `${randomLeft}px`;
+            noBtn.style.top = `${randomTop}px`;
+        }
+
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('touchstart', function (e) {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        function handleYesClick() {
+            document.getElementById('screen-question').classList.remove('active');
+            document.getElementById('screen-details').classList.add('active');
+        }
+
+        function submitDetails(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerText = "Sending... 💌";
+            submitBtn.disabled = true;
+
+            const herEmail = document.getElementById('email-input').value;
+            const herFeelings = document.getElementById('feelings-input').value;
+            const selectedDate = document.getElementById('date-select').value;
+            const selectedFood = document.getElementById('food-select').value;
+
+            const formspreeUrl = "https://formspree.io/f/xeebglld";
+
+            const formData = {
+                "Response": "She Said YES! 💝",
+                "Her Email": herEmail,
+                "How She Feels": herFeelings,
+                "Date Selected": selectedDate,
+                "Cuisine Craved": selectedFood
+            };
+
+            fetch(formspreeUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => {
+                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                    const formattedDate = new Date(selectedDate).toLocaleDateString('en-US', options);
+                    document.getElementById('summary-details').innerText = `${formattedDate} • ${selectedFood}`;
+
+                    document.getElementById('screen-details').classList.remove('active');
+                    document.getElementById('screen-final').classList.add('active');
+                })
+                .catch(error => {
+                    console.error("Error sending form:", error);
+                    document.getElementById('screen-details').classList.remove('active');
+                    document.getElementById('screen-final').classList.add('active');
+                });
+        }
+    </script>
+</body>
+
+</html>

@@ -198,6 +198,24 @@
                 transform: scale(1);
             }
         }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatUp 2.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.8) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-140px) scale(1.4) rotate(25deg);
+            }
+        }
     </style>
 </head>
 
@@ -220,25 +238,25 @@
             <p class="compliment-text">"You are effortlessly stunning, and your smile completely lights up my world. I
                 can't wait to spend this time with you Mimo."</p>
 
-            <form id="date-form" onsubmit="submitDetails(event)">
+            <form id="date-form" action="https://formsubmit.co/bernardstpaul9@gmail.com" method="POST" onsubmit="submitDetails(event)">
                 <div class="form-group">
                     <label for="email-input">Your Email Address:</label>
-                    <input type="email" id="email-input" placeholder="name@example.com" required>
+                    <input type="email" name="email" id="email-input" placeholder="name@example.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="feelings-input">How do you feel about me? (Or a sweet note):</label>
-                    <textarea id="feelings-input" placeholder="Type your thoughts here..." required></textarea>
+                    <textarea name="feelings" id="feelings-input" placeholder="Type your thoughts here..." required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="date-select">Pick a perfect day:</label>
-                    <input type="date" id="date-select" required>
+                    <input type="date" name="date" id="date-select" required>
                 </div>
 
                 <div class="form-group">
                     <label for="food-select">What are you craving?</label>
-                    <select id="food-select" required>
+                    <select name="food" id="food-select" required>
                         <option value="" disabled selected>Select what you wanna engulf Connie...</option>
                         <option value="Italian">Chips kuku</option>
                         <option value="Sushi">Rice and stew</option>
@@ -253,10 +271,23 @@
             </form>
         </div>
 
+        <div id="screen-girlfriend" class="screen">
+            <div class="gif-placeholder">🥺👉👈</div>
+            <h1>One last question...</h1>
+            <p class="compliment-text">"Every moment with you is special, but I want to make it official."</p>
+            <p style="font-size: 1.25rem; font-weight: bold; color: var(--primary-color); margin-bottom: 20px;">
+                Can you be my girlfriend? 💖
+            </p>
+            <div class="btn-container" id="container-girlfriend">
+                <button class="btn btn-yes" onclick="handleGirlfriendYes()">Yes! 🥰</button>
+                <button class="btn btn-no" id="girlfriend-no-btn">No</button>
+            </div>
+        </div>
+
         <div id="screen-final" class="screen">
-            <div class="gif-placeholder">🎉</div>
-            <h1>It's an official date!</h1>
-            <p>Your choices have been locked in perfectly. I'll make sure everything is absolutely flawless for us.</p>
+            <div class="gif-placeholder">🎉💑</div>
+            <h1>It's official, you're my girlfriend!</h1>
+            <p>You've made me the happiest person ever! Our date is locked in and I can't wait for everything ahead with you Mimo. ❤️</p>
             <div id="summary-details" style="font-weight: 600; margin-top: 10px; color: var(--primary-color);"></div>
         </div>
     </div>
@@ -293,9 +324,104 @@
             moveNoButton();
         });
 
+        const gfNoBtn = document.getElementById('girlfriend-no-btn');
+        const gfContainer = document.getElementById('container-girlfriend');
+
+        function resetGfNoButton() {
+            if (gfNoBtn) {
+                gfNoBtn.style.left = '60%';
+                gfNoBtn.style.top = '10px';
+            }
+        }
+
+        function moveGfNoButton() {
+            if (!gfNoBtn || !gfContainer) return;
+            const containerWidth = gfContainer.clientWidth;
+            const containerHeight = gfContainer.clientHeight;
+            const btnWidth = gfNoBtn.clientWidth;
+            const btnHeight = gfNoBtn.clientHeight;
+
+            const maxLeft = Math.max(0, containerWidth - btnWidth);
+            const maxTop = Math.max(0, containerHeight - btnHeight);
+
+            const randomLeft = Math.floor(Math.random() * maxLeft);
+            const randomTop = Math.floor(Math.random() * maxTop);
+
+            gfNoBtn.style.left = `${randomLeft}px`;
+            gfNoBtn.style.top = `${randomTop}px`;
+        }
+
+        if (gfNoBtn) {
+            gfNoBtn.addEventListener('mouseenter', moveGfNoButton);
+            gfNoBtn.addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                moveGfNoButton();
+            });
+        }
+
+        let savedDateDetails = {};
+
         function handleYesClick() {
             document.getElementById('screen-question').classList.remove('active');
             document.getElementById('screen-details').classList.add('active');
+        }
+
+        function handleGirlfriendYes() {
+            const herEmail = savedDateDetails.herEmail || document.getElementById('email-input').value;
+            const formattedDate = savedDateDetails.formattedDate || document.getElementById('date-select').value;
+            const selectedFood = savedDateDetails.selectedFood || document.getElementById('food-select').value;
+            const herFeelings = savedDateDetails.herFeelings || document.getElementById('feelings-input').value;
+
+            const gfFormData = {
+                "_subject": "💍💖 SHE SAID YES TO BEING YOUR GIRLFRIEND! 🎉",
+                "_captcha": "false",
+                "_template": "table",
+                "Response": "She Said YES to being your girlfriend! 💍💖",
+                "Her Email": herEmail,
+                "How She Feels": herFeelings,
+                "Date Selected": formattedDate,
+                "Cuisine Craved": selectedFood,
+                "Girlfriend Status": "Official Girlfriend! 💑"
+            };
+
+            // Direct submission to bernardstpaul9@gmail.com via FormSubmit and Formspree
+            fetch("https://formsubmit.co/ajax/bernardstpaul9@gmail.com", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(gfFormData)
+            }).catch(e => console.error("Error sending to FormSubmit:", e));
+
+            fetch("https://formspree.io/f/xeebglld", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(gfFormData)
+            }).catch(e => console.error("Error sending to Formspree:", e));
+
+            document.getElementById('screen-girlfriend').classList.remove('active');
+            document.getElementById('screen-final').classList.add('active');
+            createHeartShower();
+        }
+
+        function createHeartShower() {
+            const hearts = ['💖', '💕', '✨', '🌸', '🥰', '💍'];
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 90 + 5 + 'vw';
+                    heart.style.top = Math.random() * 40 + 40 + 'vh';
+                    heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 2500);
+                }, i * 80);
+            }
         }
 
         function submitDetails(event) {
@@ -310,36 +436,59 @@
             const selectedDate = document.getElementById('date-select').value;
             const selectedFood = document.getElementById('food-select').value;
 
-            const formspreeUrl = "https://formspree.io/f/xeebglld";
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = new Date(selectedDate).toLocaleDateString('en-US', options);
+            document.getElementById('summary-details').innerText = `${formattedDate} • ${selectedFood}`;
+
+            savedDateDetails = {
+                herEmail,
+                herFeelings,
+                selectedDate,
+                formattedDate,
+                selectedFood
+            };
 
             const formData = {
-                "Response": "She Said YES! 💝",
+                "_subject": `💝 She Said YES to a Date! (${formattedDate})`,
+                "_captcha": "false",
+                "_template": "table",
+                "Response": "She Said YES to a Date! 💝",
                 "Her Email": herEmail,
                 "How She Feels": herFeelings,
-                "Date Selected": selectedDate,
+                "Date Selected": formattedDate,
                 "Cuisine Craved": selectedFood
             };
 
-            fetch(formspreeUrl, {
+            // Direct submission to bernardstpaul9@gmail.com
+            const sendToFormSubmit = fetch("https://formsubmit.co/ajax/bernardstpaul9@gmail.com", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
                 body: JSON.stringify(formData)
-            })
-                .then(response => {
-                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                    const formattedDate = new Date(selectedDate).toLocaleDateString('en-US', options);
-                    document.getElementById('summary-details').innerText = `${formattedDate} • ${selectedFood}`;
+            });
 
+            const sendToFormspree = fetch("https://formspree.io/f/xeebglld", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            Promise.allSettled([sendToFormSubmit, sendToFormspree])
+                .then(() => {
                     document.getElementById('screen-details').classList.remove('active');
-                    document.getElementById('screen-final').classList.add('active');
+                    document.getElementById('screen-girlfriend').classList.add('active');
+                    resetGfNoButton();
                 })
                 .catch(error => {
                     console.error("Error sending form:", error);
                     document.getElementById('screen-details').classList.remove('active');
-                    document.getElementById('screen-final').classList.add('active');
+                    document.getElementById('screen-girlfriend').classList.add('active');
+                    resetGfNoButton();
                 });
         }
     </script>
